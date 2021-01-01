@@ -15,6 +15,7 @@
  */
 package org.example;
 
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.SalesforceComponent;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.springframework.boot.SpringApplication;
@@ -23,8 +24,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
 
 @SpringBootApplication
-@ImportResource({"classpath:META-INF/spring/camel-context.xml"})
-public class Application  {
+public class Application  extends RouteBuilder {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -44,4 +44,9 @@ public class Application  {
         return salesforceComponent;
     }
 
+    @Override
+    public void configure() throws Exception {
+        from("salesforce:data/AccountChangeEvent?replayId=-1")
+                .log("The change data event message is :: ${body}");
+    }
 }
